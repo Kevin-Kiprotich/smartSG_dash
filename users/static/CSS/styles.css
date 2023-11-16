@@ -1,0 +1,19 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    /* box-sizing: border-box; */
+    padding:0 !important;
+    margin:0 !important;
+}
+header{
+    height:6vh;
+    width:100vw;
+    margin-bottom:0.5vh;
+}
+#map{
+    height:93.5vh;
+    width:100w
+}
+
+
