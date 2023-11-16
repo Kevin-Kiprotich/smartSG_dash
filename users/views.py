@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from .serializers import OffenceSerializer
+from .serializers import OffenceSerializer,LocationSerializer
 from .models import Owner,Rider,Offence,Location
 
 class LoginView(APIView):
@@ -104,6 +104,6 @@ class OffenceList(APIView):
     
 class LocationsList(APIView):
     def get(self, request):
-        offences = Offence.objects.all()
-        serializer = OffenceSerializer(offences, many=True)
+        offences = Location.objects.all()
+        serializer = LocationSerializer(offences, many=True)
         return Response(serializer.data)
