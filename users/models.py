@@ -35,6 +35,12 @@ class Rider(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+class Location(models.Model):
+    time=models.DateTimeField(auto_now=True,null=False)
+    longitude=models.FloatField(null=True,max_length=9)
+    latitude=models.FloatField(null=True)
+    speed=models.FloatField(null=True)
+    vehicle=models.ForeignKey(Rider,on_delete=models.CASCADE,null=False)
 
 
 class Offence(models.Model):

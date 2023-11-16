@@ -11,3 +11,9 @@ class OffenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offence
         fields = '__all__'
+
+class LocationSerializer(serializers.ModelSerializer):
+    vehicle=RiderSerializer()
+    class Meta:
+        model= Offence
+        fields='__all__'

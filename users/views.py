@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from .serializers import OffenceSerializer
-from .models import Owner,Rider,Offence
+from .models import Owner,Rider,Offence,Location
 
 class LoginView(APIView):
     def post(self,request):
@@ -58,16 +58,31 @@ class AssignDriver(APIView):
 class ReportOffence(APIView):
     def post(self,request):
         number_plate=request.data.get('number_plate')
+        latitude=float(request.data.get('latitude'))
+        longitude=float(request.data.get('longitude'))
+        speed=float(request.data.get('speed'))
+        speedLimit=float(request.data.get('speed_limit'))
         try:
             rider=Rider.objects.get(number_plate=number_plate)
             rider.offence_count+=1
             rider.save()
-            offence=Offence(vehicle=rider)
+            offence=Offence(latitude=latitude,longitude=longitude,speed=speed,speed_limit=speedLimit,vehicle=rider)
             offence.save()
             return Response({"Success":True,"Message":"Offence Reported"})
         except Rider.DoesNotExist:
             return Response({'Success':False,"Message":"Unrecognized Number Plate"})
-        
+
+class StoreLocation(APIView):
+    def post(self,request):
+        number_plate=request.data.get('number_plate')
+        latitude=float(request.data.get('latitude'))
+        longitude=float(request.data.get('longitude'))
+        speed=float(request.data.get('speed'))
+        rider=Rider.objects.get(number_plate=number_plate)
+        location=Location(latitude=latitude,longitude=longitude,speed=speed,vehicle=rider)
+        location.save()
+
+        return Response({'Success':True,"Message":"Location Stored Successfully"})
 
 def ShowOffences(request):
     template=loader.get_template('dash.html')
@@ -86,3 +101,9 @@ class OffenceList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class LocationsList(APIView):
+    def get(self, request):
+        offences = Offence.objects.all()
+        serializer = OffenceSerializer(offences, many=True)
+        return Response(serializer.data)
