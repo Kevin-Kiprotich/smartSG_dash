@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.template import loader
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -104,6 +104,22 @@ class OffenceList(APIView):
     
 class LocationsList(APIView):
     def get(self, request):
-        offences = Location.objects.all()
-        serializer = LocationSerializer(offences, many=True)
-        return Response(serializer.data)
+        locations = Location.objects.all().order_by('time')
+        data = {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'LineString',
+                'coordinates': []
+            },
+            'properties': {
+                'times': [],
+                'speeds': []
+            }
+        }
+
+        for location in locations:
+            data['geometry']['coordinates'].append([location.longitude, location.latitude])
+            data['properties']['times'].append(location.time.isoformat())
+            data['properties']['speeds'].append(location.speed)
+
+        return JsonResponse(data, safe=False)
